@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gawynt OS | Ultimate Edition</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(28, 28, 30, 0.6);
+            --text-main: #f5f5f7;
+            --text-sub: #a1a1a6;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            --glass-blur: blur(25px) saturate(200%);
+            --accent: #007aff;
+            --card-radius: 48px;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f0f2;
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --text-main: #1d1d1f;
+            --text-sub: #6e6e73;
+            --border: rgba(0, 0, 0, 0.05);
+            --shadow: 0 40px 100px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: background 0.8s ease;
+        }
+
+        #snow-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
+        }
+
+        .theme-switch {
+            position: absolute; top: 30px; right: 30px; z-index: 100;
+            background: var(--card-bg); border: 1px solid var(--border);
+            padding: 10px 18px; border-radius: 50px; cursor: pointer;
+            backdrop-filter: var(--glass-blur); font-size: 13px; font-weight: 600;
+            color: var(--text-main); display: flex; align-items: center; gap: 8px;
+            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border);
+            border-radius: var(--card-radius);
+            padding: 56px 36px;
+            width: 92%; max-width: 440px;
+            text-align: center; box-shadow: var(--shadow);
+            z-index: 10; position: relative;
+            animation: cardEntrance 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: scale(0.9) translateY(40px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .logo-mark {
+            font-size: 32px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        h1 {
+            font-size: 44px; font-weight: 800; letter-spacing: -1.5px;
+            background: linear-gradient(180deg, var(--text-main) 30%, var(--text-sub) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .version-badge {
+            font-size: 11px; font-weight: 700; letter-spacing: 2px;
+            color: var(--accent); text-transform: uppercase; margin-bottom: 36px;
+            display: block; opacity: 0.8;
+        }
+
+        .btn-stack {
+            display: flex; flex-direction: column; gap: 12px;
+            max-height: 420px; overflow-y: auto; padding: 10px 12px;
+            mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+        }
+
+        .btn-stack::-webkit-scrollbar { width: 0px; }
+
+        .btn {
+            position: relative; text-decoration: none; padding: 20px 24px;
+            border-radius: 22px; font-weight: 600; font-size: 17px; color: #fff;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden;
+        }
+
+        .btn:hover { transform: scale(1.04) translateY(-4px); z-index: 2; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-ai { background: linear-gradient(135deg, #5E5CE6, #32ADE6); }
+        .btn-snow { background: linear-gradient(135deg, #007AFF, #5856D6); }
+        .btn-candy { background: linear-gradient(135deg, #FF2D55, #FF375F); }
+        .btn-calc { background: linear-gradient(135deg, #8E8E93, #2C2C2E); }
+        .btn-neon { background: linear-gradient(135deg, #FFD60A, #FF9F0A); color: #000; }
+        .btn-bird { background: linear-gradient(135deg, #30D5C8, #32D74B); }
+        .btn-car { background: linear-gradient(135deg, #48484A, #000000); }
+        .btn-run { background: linear-gradient(135deg, #0A84FF, #0040DD); }
+        .btn-fruit { background: linear-gradient(135deg, #32D74B, #248A3D); }
+        .btn-music { background: linear-gradient(135deg, #AF52DE, #BF5AF2); }
+        .btn-alarm { background: linear-gradient(135deg, #FF3B30, #5856D6); }
+        .btn-maze { background: linear-gradient(135deg, #1d1d1f, #00C7BE); border: 1px solid #00C7BE; animation: mazeGlow 3s infinite alternate; }
+        .btn-overtake { background: linear-gradient(135deg, #FF2D55, #5856D6); }
+        .btn-obby { background: linear-gradient(135deg, #5856D6, #AF52DE); }
+        .btn-snake { background: linear-gradient(135deg, #32D74B, #15803D); }
+        .btn-cookie { background: linear-gradient(135deg, #F59E0B, #B45309); }
+
+        .btn-hongthai { 
+            background: linear-gradient(135deg, #FF5E3A, #FF2A68, #FFD60A); 
+            background-size: 200% 200%;
+            animation: gradientMove 5s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes mazeGlow {
+            0% { box-shadow: 0 0 5px rgba(0, 199, 190, 0.2); }
+            100% { box-shadow: 0 0 20px rgba(0, 199, 190, 0.5); }
+        }
+
+        .btn i { font-style: normal; font-size: 20px; opacity: 0.5; transition: 0.4s; }
+        .btn:hover i { transform: translateX(6px); opacity: 1; }
+
+        .system-info {
+            margin-top: 36px; font-size: 12px; font-weight: 500;
+            color: var(--text-sub); display: flex; justify-content: center; align-items: center; gap: 12px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px; background: #34c759; border-radius: 50%;
+            box-shadow: 0 0 15px #34c759; animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* --- ADVANCED ADMIN PANEL --- */
+        .admin-panel {
+            position: absolute; top: 30px; left: 30px; z-index: 1000;
+            background: rgba(10, 10, 12, 0.95); border: 1px solid #FF2D55;
+            padding: 24px; border-radius: 24px; backdrop-filter: blur(20px);
+            color: #fff; width: 300px; max-height: 85vh; overflow-y: auto;
+            display: none; flex-direction: column; gap: 18px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .admin-panel::-webkit-scrollbar { width: 4px; }
+        .admin-panel::-webkit-scrollbar-thumb { background: #FF2D55; border-radius: 10px; }
+
+        .admin-section { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .admin-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #FF2D55; font-weight: 800; }
+        
+        .admin-panel label { font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-panel input, .admin-panel select { 
+            background: #2c2c2e; border: none; color: #fff; padding: 6px; border-radius: 6px; font-size: 11px; width: 120px;
+        }
+        .admin-panel input[type="color"] { width: 40px; height: 25px; cursor: pointer; padding: 0; }
+        .admin-panel input[type="range"] { width: 100px; accent-color: #FF2D55; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <canvas id="snow-canvas"></canvas>
+
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-title-header" style="color:#FF2D55; font-weight:800; text-align:center; margin-bottom:10px; font-size: 15px;">⚡ COMMAND CENTER</div>
+        
+        <div class="admin-section">
+            <div class="admin-section-title">Visual Branding</div>
+            <label>Title Text <input type="text" id="admTitle" oninput="pushGlobalSettings()"></label>
+            <label>Logo Icon <input type="text" id="admLogo" oninput="pushGlobalSettings()"></label>
+            <label>Version Tag <input type="text" id="admVersion" oninput="pushGlobalSettings()"></label>
+            <label>Accent Color <input type="color" id="admAccent" value="#007aff" oninput="pushGlobalSettings()"></label>
+            <label>Background <input type="color" id="admBg" value="#050505" oninput="pushGlobalSettings()"></label>
+        </div>
+
+        <div class="admin-section">
+            <div class="admin-section-title">Glass Physics</div>
+            <label>Glass Blur <input type="range" id="admBlur" min="0" max="50" value="25" oninput="pushGlobalSettings()"></label>
+            <label>Glass Opacity <input type="range" id="admOpacity" min="0" max="100" value="60" oninput="pushGlobalSettings()"></label>
+            <label>Card Radius <input type="range" id="admRadius" min="0" max="100" value="48" oninput="pushGlobalSettings()"></label>
+        </div>
+
+        <div class="admin-section">
+            <div class="admin-section-title">Atmosphere</div>
+            <label>Effect Type
+                <select id="admEffect" onchange="pushGlobalSettings()">
+                    <option value="snow">Snow</option>
+                    <option value="leaves">Leaves</option>
+                    <option value="rain">Rain</option>
+                    <option value="stars">Stars</option>
+                    <option value="confetti">Confetti</option>
+                    <option value="matrix">Matrix Code</option>
+                    <option value="disco">Party Disco</option> 
+                </select>
+            </label>
+            <label>Particle Count <input type="range" id="admCount" min="20" max="300" value="100" oninput="pushGlobalSettings()"></label>
+            <label>Effect Speed <input type="range" id="admSpeed" min="0" max="5" step="0.1" value="1" oninput="pushGlobalSettings()"></label>
+            <label>Effect Size <input type="range" id="admSize" min="0.5" max="5" step="0.5" value="1" oninput="pushGlobalSettings()"></label>
+        </div>
+
+        <div class="admin-section" style="border:none;">
+            <div class="admin-section-title">System Status</div>
+            <label>Status Text <input type="text" id="admStatus" oninput="pushGlobalSettings()"></label>
+            <label>Location Text <input type="text" id="admLocation" oninput="pushGlobalSettings()"></label>
+            <label>Status Color <input type="color" id="admStatusCol" value="#34c759" oninput="pushGlobalSettings()"></label>
+        </div>
+    </div>
+    
+    <button class="theme-switch" onclick="toggleTheme()">
+        <span id="mode-icon">☀️</span> <span id="mode-text">Light Mode</span>
+    </button>
+
+    <div class="glass-card" id="mainCard">
+        <div class="logo-mark" id="dispLogo"></div> 
+        <h1 id="dispTitle">GAWYNT</h1>
+        <span class="version-badge" id="dispVersion">Quantum Hub v2.6.4</span>
+
+        <div class="btn-stack">
+            <a href="https://Gawyntgg.github.io/Hongthai/" class="btn btn-hongthai" onclick="createBurst(event)">
+                <span>🐅 Hongthai</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Gawynt-Snow-shoveling/" class="btn btn-snow" onclick="createBurst(event)">
+                <span>❄️ Snow Shoveling</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/GS-Candy/" class="btn btn-candy" onclick="createBurst(event)">
+                <span>🍭 GS-Candy</span><i>→</i>
+            </a>
+            <a href="https://gawyntgg.github.io/Calculator-/" class="btn btn-calc" onclick="createBurst(event)">
+                <span>🔢 Calculator</span><i>→</i>
+            </a>
+            <a href="https://gawyntgg.github.io/Neon-Runner/" class="btn btn-neon" onclick="createBurst(event)">
+                <span>⚡ Neon Runner</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Flappy-bird/" class="btn btn-bird" onclick="createBurst(event)">
+                <span>🐦 Flappy Bird</span><i>→</i>
+            </a>
+            <a href="https://gawyntgg.github.io/Car/" class="btn btn-car" onclick="createBurst(event)">
+                <span>🚗 Car Game</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Run/" class="btn btn-run" onclick="createBurst(event)">
+                <span>🏃 Run Game</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Fruit/" class="btn btn-fruit" onclick="createBurst(event)">
+                <span>🍎 Fruit Game</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Music/" class="btn btn-music" onclick="createBurst(event)">
+                <span>🎵 Music Hub</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Alarmy/" class="btn btn-alarm" onclick="createBurst(event)">
+                <span>⏰ Alarmy</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Maze/" class="btn btn-maze" onclick="createBurst(event)">
+                <span>🧩 Digital Maze</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Gawynt-AI" class="btn btn-ai" onclick="createBurst(event)">
+                <span>🤖 Gawynt AI</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Overtake/" class="btn btn-overtake" onclick="createBurst(event)">
+                <span>🏎️ Overtake</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Obby" class="btn btn-obby" onclick="createBurst(event)">
+                <span>🧱 Obby</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Snake/" class="btn btn-snake" onclick="createBurst(event)">
+                <span>🐍 Snake Game</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Tictactoe/" class="btn btn-tictactoe" onclick="createBurst(event)"><span>❌ Tic-Tac-Toe</span><i>→</i></a>
+            <a href="https://Gawyntgg.github.io/Cookie/" class="btn btn-cookie" onclick="createBurst(event)"><span>🍪 Cookie Cutter</span><i>→</i></a>
+        </a>
+            <a href="https://Gawyntgg.github.io/Secret/" class="btn btn-Secret" onclick="createBurst(event)">
+                <span>🤐🔑🔒 Secret</span><i>→</i>
+            </a>
+        <div class="system-info">
+            <span style="display:flex; align-items:center; gap:6px;">
+                <div class="status-dot" id="dispDot"></div> 
+                <span id="dispStatus">Hub Online</span>
+            </span>
+            <span>•</span>
+            <span id="dispLocation">Calgary Tech</span>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuWWnqDX5mUra5pF3uuBxEVSKjcESifTk",
+            authDomain: "gawynt-hub.firebaseapp.com",
+            databaseURL: "https://gawynt-hub-default-rtdb.firebaseio.com",
+            projectId: "gawynt-hub",
+            storageBucket: "gawynt-hub.firebasestorage.app",
+            messagingSenderId: "330651852035",
+            appId: "1:330651852035:web:db931f867da21b6a519d36"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function pushGlobalSettings() {
+            const settings = {
+                title: document.getElementById('admTitle').value || 'GAWYNT',
+                logo: document.getElementById('admLogo').value || '',
+                version: document.getElementById('admVersion').value || 'Quantum Hub v2.6.4',
+                accent: document.getElementById('admAccent').value,
+                bg: document.getElementById('admBg').value,
+                blur: document.getElementById('admBlur').value,
+                opacity: document.getElementById('admOpacity').value,
+                radius: document.getElementById('admRadius').value,
+                effect: document.getElementById('admEffect').value,
+                count: document.getElementById('admCount').value,
+                speed: document.getElementById('admSpeed').value,
+                size: document.getElementById('admSize').value,
+                status: document.getElementById('admStatus').value || 'Hub Online',
+                location: document.getElementById('admLocation').value || 'Calgary Tech',
+                statusCol: document.getElementById('admStatusCol').value
+            };
+            database.ref('siteSettings').set(settings);
+        }
+
+        database.ref('siteSettings').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            // Apply Texts
+            document.getElementById('dispTitle').innerText = data.title;
+            document.getElementById('dispLogo').innerText = data.logo;
+            document.getElementById('dispVersion').innerText = data.version;
+            document.getElementById('dispStatus').innerText = data.status;
+            document.getElementById('dispLocation').innerText = data.location;
+
+            // Apply Styles via CSS Variables
+            const root = document.documentElement;
+            root.style.setProperty('--accent', data.accent);
+            root.style.setProperty('--bg-color', data.bg);
+            root.style.setProperty('--glass-blur', `blur(${data.blur}px) saturate(200%)`);
+            root.style.setProperty('--card-bg', `rgba(28, 28, 30, ${data.opacity / 100})`);
+            root.style.setProperty('--card-radius', `${data.radius}px`);
+            
+            document.getElementById('dispDot').style.background = data.statusCol;
+            document.getElementById('dispDot').style.boxShadow = `0 0 15px ${data.statusCol}`;
+
+            // Sync Particle Engine Settings
+            adminEffectType = data.effect;
+            adminSnowSpeed = parseFloat(data.speed);
+            adminEffectSize = parseFloat(data.size);
+            
+            // Re-initialize particles if count changes drastically
+            if(Math.abs(particles.length - parseInt(data.count)) > 5) {
+                targetParticleCount = parseInt(data.count);
+                initSnow();
+            }
+
+            // Sync Inputs (only if not currently typing to prevent cursor jump)
+            if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+                document.getElementById('admTitle').value = data.title;
+                document.getElementById('admLogo').value = data.logo;
+                document.getElementById('admVersion').value = data.version;
+                document.getElementById('admAccent').value = data.accent;
+                document.getElementById('admBg').value = data.bg;
+                document.getElementById('admBlur').value = data.blur;
+                document.getElementById('admOpacity').value = data.opacity;
+                document.getElementById('admRadius').value = data.radius;
+                document.getElementById('admEffect').value = data.effect;
+                document.getElementById('admCount').value = data.count;
+                document.getElementById('admSpeed').value = data.speed;
+                document.getElementById('admSize').value = data.size;
+                document.getElementById('admStatus').value = data.status;
+                document.getElementById('admLocation').value = data.location;
+                document.getElementById('admStatusCol').value = data.statusCol;
+            }
+        });
+
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('mode-text').innerText = isDark ? "Dark Mode" : "Light Mode";
+            document.getElementById('mode-icon').innerText = isDark ? "🌙" : "☀️";
+        }
+
+        const canvas = document.getElementById('snow-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let bursts = [];
+        let targetParticleCount = 100;
+        let adminSnowSpeed = 1; 
+        let adminEffectType = 'snow'; 
+        let adminEffectSize = 1;       
+        const confettiColors = ['#FF2D55', '#5856D6', '#34C759', '#FF9F0A', '#32ADE6', '#00C7BE'];
+
+        function initSnow() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < targetParticleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 0.5,
+                    vx: (Math.random() - 0.5) * 1,
+                    vy: Math.random() * 1.5 + 0.5,
+                    color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                    rotation: Math.random() * Math.PI * 2,
+                    rotSpeed: (Math.random() - 0.5) * 0.1,
+                    char: String.fromCharCode(0x30A0 + Math.random() * 96)
+                });
+            }
+        }
+
+        function createBurst(e) {
+            for(let i=0; i<15; i++) {
+                bursts.push({
+                    x: e.clientX,
+                    y: e.clientY,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10,
+                    life: 1.0,
+                    color: '#FFD60A'
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const theme = document.body.getAttribute('data-theme');
+            
+            for (let p of particles) {
+                let baseRadius = p.radius * adminEffectSize;
+                ctx.beginPath();
+                
+                if (adminEffectType === 'snow') {
+                    ctx.fillStyle = theme === 'dark' ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.2)";
+                    ctx.arc(p.x, p.y, baseRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (adminEffectType === 'leaves') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+                    ctx.fillStyle = theme === 'dark' ? "rgba(255, 165, 0, 0.6)" : "rgba(200, 100, 0, 0.6)";
+                    ctx.ellipse(0, 0, baseRadius * 1.5, baseRadius * 3, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                    p.rotation += p.rotSpeed;
+                } else if (adminEffectType === 'rain') {
+                    ctx.strokeStyle = theme === 'dark' ? "rgba(150, 200, 255, 0.6)" : "rgba(50, 100, 200, 0.5)";
+                    ctx.lineWidth = baseRadius / 2 > 0 ? baseRadius / 2 : 0.5;
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p.x - p.vx, p.y - p.vy * 4 * adminSnowSpeed); 
+                    ctx.stroke();
+                } else if (adminEffectType === 'stars') {
+                    ctx.fillStyle = theme === 'dark' ? "rgba(255, 255, 100, 0.8)" : "rgba(255, 200, 0, 0.8)";
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+                    for(let k=0; k<5; k++) {
+                        ctx.lineTo(0, baseRadius * 2);
+                        ctx.translate(0, baseRadius * 2);
+                        ctx.rotate((Math.PI * 2) / 10);
+                        ctx.lineTo(0, -baseRadius * 2);
+                        ctx.translate(0, -baseRadius * 2);
+                        ctx.rotate(-((Math.PI * 2) / 10 * 3));
+                    }
+                    ctx.fill();
+                    ctx.restore();
+                    p.rotation += p.rotSpeed * 0.5;
+                } else if (adminEffectType === 'confetti') {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-baseRadius*1.5, -baseRadius, baseRadius*3, baseRadius*2);
+                    ctx.restore();
+                    p.rotation += p.rotSpeed * 1.5;
+                } else if (adminEffectType === 'matrix') {
+                    ctx.fillStyle = "#0F0";
+                    ctx.font = `${baseRadius * 5 + 10}px monospace`;
+                    ctx.fillText(p.char, p.x, p.y);
+                    if (Math.random() < 0.02) p.char = String.fromCharCode(0x30A0 + Math.random() * 96);
+                } else if (adminEffectType === 'disco') {
+                    let discoColors = ['#FF2D55', '#007AFF', '#34C759', '#FFD60A', '#AF52DE', '#FF9F0A'];
+                    ctx.fillStyle = discoColors[Math.floor(Math.random() * discoColors.length)];
+                    ctx.arc(p.x, p.y, baseRadius * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    p.x += (Math.random() - 0.5) * 8 * adminSnowSpeed;
+                    p.y += (Math.random() - 0.5) * 8 * adminSnowSpeed;
+                }
+                
+                let currentVy = p.vy * adminSnowSpeed;
+                if (adminEffectType === 'rain') currentVy *= 3;
+                p.y += currentVy; 
+                p.x += (p.vx * adminSnowSpeed);
+                
+                if (p.y > canvas.height + 20) {
+                    p.y = -20;
+                    p.x = Math.random() * canvas.width;
+                }
+                if (p.x < -20) p.x = canvas.width + 20;
+                if (p.x > canvas.width + 20) p.x = -20;
+            }
+            
+            for (let i = bursts.length - 1; i >= 0; i--) {
+                let b = bursts[i];
+                ctx.fillStyle = `rgba(255, 214, 10, ${b.life})`;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+                b.x += b.vx; b.y += b.vy;
+                b.life -= 0.02;
+                if(b.life <= 0) bursts.splice(i, 1);
+            }
+            requestAnimationFrame(draw);
+        }
+
+        const card = document.getElementById('mainCard');
+        document.addEventListener('mousemove', (e) => {
+            const rotateX = (window.innerHeight / 2 - e.pageY) / 30;
+            const rotateY = (e.pageX - window.innerWidth / 2) / 30;
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        card.addEventListener('dblclick', () => {
+            const panel = document.getElementById('adminPanel');
+            if (panel.style.display === 'none' || panel.style.display === '') {
+                const pass = prompt('Enter Admin Passcode:');
+                if (pass === 'Greenshark!0') {
+                    panel.style.display = 'flex';
+                } else if (pass !== null) {
+                    alert('Access Denied');
+                }
+            } else {
+                panel.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('resize', initSnow);
+        initSnow();
+        draw();
+    </script>
+</body>
+</html>

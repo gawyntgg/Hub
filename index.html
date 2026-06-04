@@ -1,3 +1,18 @@
+It looks like your project is coming along really well! The design and the Firebase integration for the dynamic admin control are a great touch.
+
+However, I spotted one critical **HTML syntax error** in your `glass-card` section. In your code, the heading and the button wrapper were tangled, which would likely cause the styling to break or render unpredictably in some browsers. Specifically, you had a double `<h1>` tag and the `btn-stack` div was missing its proper closing structure.
+
+I have cleaned up that specific HTML block and provided the **complete, fully corrected code** below so you can copy and paste it with confidence.
+
+### Key Fixes Applied:
+
+1. **Fixed Heading:** Corrected `<h1 <h1` to a single, valid `<h1 id="dispTitle">`.
+2. **Proper Nesting:** Ensured all your `<a>` (button) tags are correctly wrapped inside the `btn-stack` `<div>`, and the `div` is closed properly at the end.
+3. **Clean DOM:** Removed the trailing/mismatched tags that were causing the layout glitches.
+
+Here is the corrected code:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -119,34 +134,28 @@
         .btn:hover { transform: scale(1.04) translateY(-4px); z-index: 2; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
         .btn:active { transform: scale(0.98); }
 
-    /* --- Button Gradients --- */
-.btn-ai { background: linear-gradient(135deg, #5E5CE6, #32ADE6); }
-.btn-snow { background: linear-gradient(135deg, #007AFF, #5856D6); }
-.btn-candy { background: linear-gradient(135deg, #FF2D55, #FF375F); }
-.btn-calc { background: linear-gradient(135deg, #8E8E93, #2C2C2E); }
-.btn-neon { background: linear-gradient(135deg, #FFD60A, #FF9F0A); color: #000; }
-.btn-bird { background: linear-gradient(135deg, #30D5C8, #32D74B); }
-.btn-car { background: linear-gradient(135deg, #48484A, #000000); }
-.btn-run { background: linear-gradient(135deg, #0A84FF, #0040DD); }
-.btn-fruit { background: linear-gradient(135deg, #32D74B, #248A3D); }
-.btn-music { background: linear-gradient(135deg, #AF52DE, #BF5AF2); }
-.btn-alarm { background: linear-gradient(135deg, #FF3B30, #5856D6); }
-.btn-maze { background: linear-gradient(135deg, #1d1d1f, #00C7BE); border: 1px solid #00C7BE; animation: mazeGlow 3s infinite alternate; }
-.btn-overtake { background: linear-gradient(135deg, #FF2D55, #5856D6); }
-.btn-obby { background: linear-gradient(135deg, #5856D6, #AF52DE); }
-.btn-snake { background: linear-gradient(135deg, #32D74B, #15803D); }
-.btn-cookie { background: linear-gradient(135deg, #F59E0B, #B45309); }
-.btn-tictactoe { background: linear-gradient(135deg, #FF2D55, #FF9500); }
-.btn-Secret { background: linear-gradient(135deg, #3a3a3c, #1c1c1e); }
-.btn-Chat { background: linear-gradient(135deg, #F59E0B, #B45309); }
-.btn-hongthai { 
-    background: linear-gradient(135deg, #FF5E3A, #FF2A68, #FFD60A); 
-    background-size: 200% 200%; 
-    animation: gradientMove 5s ease infinite; 
-} 
+        /* Button Gradients */
+        .btn-ai { background: linear-gradient(135deg, #5E5CE6, #32ADE6); }
+        .btn-snow { background: linear-gradient(135deg, #007AFF, #5856D6); }
+        .btn-candy { background: linear-gradient(135deg, #FF2D55, #FF375F); }
+        .btn-calc { background: linear-gradient(135deg, #8E8E93, #2C2C2E); }
+        .btn-neon { background: linear-gradient(135deg, #FFD60A, #FF9F0A); color: #000; }
+        .btn-bird { background: linear-gradient(135deg, #30D5C8, #32D74B); }
+        .btn-car { background: linear-gradient(135deg, #48484A, #000000); }
+        .btn-run { background: linear-gradient(135deg, #0A84FF, #0040DD); }
+        .btn-fruit { background: linear-gradient(135deg, #32D74B, #248A3D); }
+        .btn-music { background: linear-gradient(135deg, #AF52DE, #BF5AF2); }
+        .btn-alarm { background: linear-gradient(135deg, #FF3B30, #5856D6); }
+        .btn-maze { background: linear-gradient(135deg, #1d1d1f, #00C7BE); border: 1px solid #00C7BE; animation: mazeGlow 3s infinite alternate; }
+        .btn-overtake { background: linear-gradient(135deg, #FF2D55, #5856D6); }
+        .btn-obby { background: linear-gradient(135deg, #5856D6, #AF52DE); }
+        .btn-snake { background: linear-gradient(135deg, #32D74B, #15803D); }
+        .btn-cookie { background: linear-gradient(135deg, #F59E0B, #B45309); }
+        .btn-tictactoe { background: linear-gradient(135deg, #FF2D55, #FF9500); }
+        .btn-Secret { background: linear-gradient(135deg, #3a3a3c, #1c1c1e); }
+        .btn-Chat { background: linear-gradient(135deg, #F59E0B, #B45309); }
+        .btn-hongthai { background: linear-gradient(135deg, #FF5E3A, #FF2A68, #FFD60A); background-size: 200% 200%; animation: gradientMove 5s ease infinite; } 
     
-        
-
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -173,7 +182,7 @@
 
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* --- ADVANCED ADMIN PANEL --- */
+        /* Admin Panel Styles */
         .admin-panel {
             position: absolute; top: 30px; left: 30px; z-index: 1000;
             background: rgba(10, 10, 12, 0.95); border: 1px solid #FF2D55;
@@ -184,14 +193,10 @@
         }
         .admin-panel::-webkit-scrollbar { width: 4px; }
         .admin-panel::-webkit-scrollbar-thumb { background: #FF2D55; border-radius: 10px; }
-
         .admin-section { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
         .admin-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #FF2D55; font-weight: 800; }
-        
         .admin-panel label { font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .admin-panel input, .admin-panel select { 
-            background: #2c2c2e; border: none; color: #fff; padding: 6px; border-radius: 6px; font-size: 11px; width: 120px;
-        }
+        .admin-panel input, .admin-panel select { background: #2c2c2e; border: none; color: #fff; padding: 6px; border-radius: 6px; font-size: 11px; width: 120px; }
         .admin-panel input[type="color"] { width: 40px; height: 25px; cursor: pointer; padding: 0; }
         .admin-panel input[type="range"] { width: 100px; accent-color: #FF2D55; }
     </style>
@@ -251,72 +256,73 @@
 
     <div class="glass-card" id="mainCard">
         <div class="logo-mark" id="dispLogo"></div> 
-        <h1 <h1 id="dispTitle">GAWYNT</h1>
-<span class="version-badge" id="dispVersion">Quantum Hub v2.6.4</span> <div class="btn-stack">
-    </div>
-    <a href="https://Gawyntgg.github.io/Hongthai/" class="btn btn-hongthai" onclick="createBurst(event)">
-        <span>🐅 Hongthai</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Gawynt-Snow-shoveling/" class="btn btn-snow" onclick="createBurst(event)">
-        <span>❄️ Snow Shoveling</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/GS-Candy/" class="btn btn-candy" onclick="createBurst(event)">
-        <span>🍭 GS-Candy</span><i>→</i>
-    </a>
-    <a href="https://gawyntgg.github.io/Calculator-/" class="btn btn-calc" onclick="createBurst(event)">
-        <span>🔢 Calculator</span><i>→</i>
-    </a>
-    <a href="https://gawyntgg.github.io/Neon-Runner/" class="btn btn-neon" onclick="createBurst(event)">
-        <span>⚡ Neon Runner</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Flappy-bird/" class="btn btn-bird" onclick="createBurst(event)">
-        <span>🐦 Flappy Bird</span><i>→</i>
-    </a>
-    <a href="https://gawyntgg.github.io/Car/" class="btn btn-car" onclick="createBurst(event)">
-        <span>🚗 Car Game</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Run/" class="btn btn-run" onclick="createBurst(event)">
-        <span>🏃 Run Game</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Fruit/" class="btn btn-fruit" onclick="createBurst(event)">
-        <span>🍎 Fruit Game</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Music/" class="btn btn-music" onclick="createBurst(event)">
-        <span>🎵 Music Hub</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Alarmy/" class="btn btn-alarm" onclick="createBurst(event)">
-        <span>⏰ Alarmy</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Maze/" class="btn btn-maze" onclick="createBurst(event)">
-        <span>🧩 Digital Maze</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Gawynt-AI" class="btn btn-ai" onclick="createBurst(event)">
-        <span>🤖 Gawynt AI</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Overtake/" class="btn btn-overtake" onclick="createBurst(event)">
-        <span>🏎️ Overtake</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Obby" class="btn btn-obby" onclick="createBurst(event)">
-        <span>🧱 Obby</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Snake/" class="btn btn-snake" onclick="createBurst(event)">
-        <span>🐍 Snake Game</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Tictactoe/" class="btn btn-tictactoe" onclick="createBurst(event)">
-        <span>❌ Tic-Tac-Toe</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Cookie/" class="btn btn-cookie" onclick="createBurst(event)">
-        <span>🍪 Cookie Cutter</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Secret/" class="btn btn-Secret" onclick="createBurst(event)">
-        <span>🤐🔑🔒 Secret</span><i>→</i>
-    </a>
-    <a href="https://Gawyntgg.github.io/Chat/" class="btn btn-Chat" onclick="createBurst(event)">
-        <span>💬 Chat</span><i>→</i>
-    </a>
-</div> 
+        <h1 id="dispTitle">GAWYNT</h1>
+        <span class="version-badge" id="dispVersion">Quantum Hub v2.6.4</span>
+
+        <div class="btn-stack">
+            <a href="https://Gawyntgg.github.io/Hongthai/" class="btn btn-hongthai" onclick="createBurst(event)">
+                <span>🐅 Hongthai</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Gawynt-Snow-shoveling/" class="btn btn-snow" onclick="createBurst(event)">
+                <span>❄️ Snow Shoveling</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/GS-Candy/" class="btn btn-candy" onclick="createBurst(event)">
+                <span>🍭 GS-Candy</span><i>→</i>
+            </a>
+            <a href="https://gawyntgg.github.io/Calculator-/" class="btn btn-calc" onclick="createBurst(event)">
+                <span>🔢 Calculator</span><i>→</i>
+            </a>
+            <a href="https://gawyntgg.github.io/Neon-Runner/" class="btn btn-neon" onclick="createBurst(event)">
+                <span>⚡ Neon Runner</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Flappy-bird/" class="btn btn-bird" onclick="createBurst(event)">
+                <span>🐦 Flappy Bird</span><i>→</i>
+            </a>
+            <a href="https://gawyntgg.github.io/Car/" class="btn btn-car" onclick="createBurst(event)">
+                <span>🚗 Car Game</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Run/" class="btn btn-run" onclick="createBurst(event)">
+                <span>🏃 Run Game</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Fruit/" class="btn btn-fruit" onclick="createBurst(event)">
+                <span>🍎 Fruit Game</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Music/" class="btn btn-music" onclick="createBurst(event)">
+                <span>🎵 Music Hub</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Alarmy/" class="btn btn-alarm" onclick="createBurst(event)">
+                <span>⏰ Alarmy</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Maze/" class="btn btn-maze" onclick="createBurst(event)">
+                <span>🧩 Digital Maze</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Gawynt-AI" class="btn btn-ai" onclick="createBurst(event)">
+                <span>🤖 Gawynt AI</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Overtake/" class="btn btn-overtake" onclick="createBurst(event)">
+                <span>🏎️ Overtake</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Obby" class="btn btn-obby" onclick="createBurst(event)">
+                <span>🧱 Obby</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Snake/" class="btn btn-snake" onclick="createBurst(event)">
+                <span>🐍 Snake Game</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Tictactoe/" class="btn btn-tictactoe" onclick="createBurst(event)">
+                <span>❌ Tic-Tac-Toe</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Cookie/" class="btn btn-cookie" onclick="createBurst(event)">
+                <span>🍪 Cookie Cutter</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Secret/" class="btn btn-Secret" onclick="createBurst(event)">
+                <span>🤐🔑🔒 Secret</span><i>→</i>
+            </a>
+            <a href="https://Gawyntgg.github.io/Chat/" class="btn btn-Chat" onclick="createBurst(event)">
+                <span>💬 Chat</span><i>→</i>
+            </a>
+        </div> 
             
-     <div class="system-info">
+        <div class="system-info">
             <span style="display:flex; align-items:center; gap:6px;">
                 <div class="status-dot" id="dispDot"></div> 
                 <span id="dispStatus">Hub Online</span>
@@ -365,14 +371,12 @@
             const data = snapshot.val();
             if (!data) return;
 
-            // Apply Texts
             document.getElementById('dispTitle').innerText = data.title;
             document.getElementById('dispLogo').innerText = data.logo;
             document.getElementById('dispVersion').innerText = data.version;
             document.getElementById('dispStatus').innerText = data.status;
             document.getElementById('dispLocation').innerText = data.location;
 
-            // Apply Styles via CSS Variables
             const root = document.documentElement;
             root.style.setProperty('--accent', data.accent);
             root.style.setProperty('--bg-color', data.bg);
@@ -383,18 +387,15 @@
             document.getElementById('dispDot').style.background = data.statusCol;
             document.getElementById('dispDot').style.boxShadow = `0 0 15px ${data.statusCol}`;
 
-            // Sync Particle Engine Settings
             adminEffectType = data.effect;
             adminSnowSpeed = parseFloat(data.speed);
             adminEffectSize = parseFloat(data.size);
             
-            // Re-initialize particles if count changes drastically
             if(Math.abs(particles.length - parseInt(data.count)) > 5) {
                 targetParticleCount = parseInt(data.count);
                 initSnow();
             }
 
-            // Sync Inputs (only if not currently typing to prevent cursor jump)
             if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
                 document.getElementById('admTitle').value = data.title;
                 document.getElementById('admLogo').value = data.logo;
@@ -429,7 +430,7 @@
         let targetParticleCount = 100;
         let adminSnowSpeed = 1; 
         let adminEffectType = 'snow'; 
-        let adminEffectSize = 1;       
+        let adminEffectSize = 1;      
         const confettiColors = ['#FF2D55', '#5856D6', '#34C759', '#FF9F0A', '#32ADE6', '#00C7BE'];
 
         function initSnow() {
@@ -582,3 +583,5 @@
     </script>
 </body>
 </html>
+
+```

@@ -136,7 +136,6 @@
         .btn-snake { background: linear-gradient(135deg, #32D74B, #15803D); }
         .btn-cookie { background: linear-gradient(135deg, #F59E0B, #B45309); }
         
-        /* New Custom Button Colors */
         .btn-tictactoe { background: linear-gradient(135deg, #FF2D55, #5856D6); }
         .btn-Secret { background: linear-gradient(135deg, #1C1C1E, #3A3A3C); border: 1px solid #FFD60A; }
         .btn-Chat { background: linear-gradient(135deg, #34C759, #32ADE6); }
@@ -200,13 +199,17 @@
 </head>
 <body data-theme="dark">
 
-    <div id="errorOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#000; z-index:999999; flex-direction:column; justify-content:center; align-items:center; color:white; text-align:center;">
-        <h1 style="font-size:4rem; color:#FF3B30; margin-bottom:10px; font-weight:900;">WEBSITE ERROR</h1>
-        <p style="font-size:1.5rem; color:#a1a1a6; font-weight:500;">Please wait...</p>
+    <!-- GLOBAL LOCKDOWN OVERLAY (PASSWORD REQUIRED) -->
+    <div id="lockdownOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:rgba(5, 5, 5, 0.98); z-index:999999; flex-direction:column; justify-content:center; align-items:center; color:white; text-align:center; backdrop-filter: blur(15px);">
+        <h1 style="font-size:3rem; color:#FF3B30; margin-bottom:10px; font-weight:900; letter-spacing: 2px;">SYSTEM LOCKED</h1>
+        <p style="font-size:1.1rem; color:#a1a1a6; font-weight:500; margin-bottom: 30px;">Enter security password to restore global access.</p>
+        <input type="password" id="lockPwdInput" placeholder="Enter Password..." style="padding:15px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; outline:none; text-align:center; margin-bottom:15px; width:250px; font-size:16px;">
+        <button onclick="checkUnlockPassword()" style="padding:15px 30px; background:linear-gradient(135deg, #007AFF, #5856D6); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:16px; width:250px; transition: 0.3s;">UNLOCK SITE</button>
     </div>
 
     <canvas id="snow-canvas"></canvas>
 
+    <!-- FLOATING D2L EMERGENCY BUTTON -->
     <button id="emergencyTriggerBtn" onclick="triggerGlobalEmergency()" style="display:none; position:fixed; top:80px; right:30px; z-index:99999; background:linear-gradient(135deg, #FF3B30, #FF2D55); color:white; border:none; padding:12px 20px; border-radius:50px; font-weight:800; font-size:13px; cursor:pointer; box-shadow: 0 10px 20px rgba(255,45,85,0.4); text-transform:uppercase; letter-spacing:1px;">
         🚨 Trigger D2L
     </button>
@@ -360,28 +363,29 @@
         const database = firebase.database();
 
         let currentEmergencyState = false;
-        let redirectTimer;
 
         function toggleD2LButtonLocal() {
             const btn = document.getElementById('emergencyTriggerBtn');
             btn.style.display = document.getElementById('admShowD2LBtn').checked ? 'flex' : 'none';
         }
 
+        // TRIGGER THE EMERGENCY
         function triggerGlobalEmergency() {
             database.ref('siteSettings').update({ d2lEmergency: true });
         }
 
-        function disableGlobalEmergency() {
-            database.ref('siteSettings').update({ d2lEmergency: false });
-            document.getElementById('adminPanel').style.display = 'flex';
-            document.getElementById('admShowD2LBtn').checked = false;
-            toggleD2LButtonLocal();
+        // CHECK PASSWORD TO UNLOCK SITE
+        function checkUnlockPassword() {
+            const pwd = document.getElementById('lockPwdInput').value;
+            // Accepts both spellings just in case
+            if (pwd === 'Greensahrk!0' || pwd === 'Greenshark!0') {
+                database.ref('siteSettings').update({ d2lEmergency: false });
+                document.getElementById('lockPwdInput').value = '';
+            } else {
+                alert('ACCESS DENIED: Incorrect Password');
+                document.getElementById('lockPwdInput').value = '';
+            }
         }
-
-        // Double click the error screen to disable it and open admin panel
-        document.getElementById('errorOverlay').addEventListener('dblclick', () => {
-            disableGlobalEmergency();
-        });
 
         function pushGlobalSettings() {
             const settings = {
@@ -413,19 +417,18 @@
             currentEmergencyState = data.d2lEmergency || false;
 
             if (currentEmergencyState) {
-                document.getElementById('errorOverlay').style.display = 'flex';
-                // Trigger redirect after 3.5 seconds
-                if (!redirectTimer) {
-                    redirectTimer = setTimeout(() => {
-                        window.location.href = "https://d2l.cbe.ab.ca/d2l/loginh/";
-                    }, 3500); 
+                // If they haven't been redirected yet this session, send them instantly
+                if (!sessionStorage.getItem('d2l_redirected')) {
+                    sessionStorage.setItem('d2l_redirected', 'true');
+                    window.location.href = "https://d2l.cbe.ab.ca/d2l/loginh/";
+                } else {
+                    // If they came back (hit back button), trap them with the password screen
+                    document.getElementById('lockdownOverlay').style.display = 'flex';
                 }
             } else {
-                document.getElementById('errorOverlay').style.display = 'none';
-                if (redirectTimer) {
-                    clearTimeout(redirectTimer);
-                    redirectTimer = null;
-                }
+                // If emergency is turned off (via correct password), hide lockdown & clear session
+                document.getElementById('lockdownOverlay').style.display = 'none';
+                sessionStorage.removeItem('d2l_redirected');
             }
 
             // Apply Texts

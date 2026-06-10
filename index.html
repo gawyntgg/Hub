@@ -1,26 +1,13 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gawynt OS | Ultimate Edition</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     
-    <script>
-        // INSTANT LOCKDOWN CHECK: Runs before the page even loads to prevent the "flash"
-        if (sessionStorage.getItem('d2l_redirected') === 'true') {
-            document.documentElement.classList.add('instant-lock');
-        }
-    </script>
-
     <style>
-        /* INSTANT LOCKDOWN CSS: Hides everything except the lockdown screen instantly */
-        html.instant-lock body > *:not(#lockdownOverlay) {
-            display: none !important;
-        }
-        html.instant-lock #lockdownOverlay {
-            display: flex !important;
-        }
-
         :root {
             --bg-color: #050505;
             --card-bg: rgba(28, 28, 30, 0.6);
@@ -109,7 +96,7 @@
         .version-badge {
             font-size: 11px; font-weight: 700; letter-spacing: 2px;
             color: var(--accent); text-transform: uppercase; margin-bottom: 36px;
-            display: block; opacity: 0.8; cursor: pointer;
+            display: block; opacity: 0.8;
         }
 
         .btn-stack {
@@ -208,8 +195,11 @@
         }
         .admin-panel input[type="color"] { width: 40px; height: 25px; cursor: pointer; padding: 0; }
         .admin-panel input[type="range"] { width: 100px; accent-color: #FF2D55; }
-    </style></head><body data-theme="dark">
+    </style>
+</head>
+<body data-theme="dark">
 
+    <!-- GLOBAL LOCKDOWN OVERLAY (PASSWORD REQUIRED) -->
     <div id="lockdownOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:rgba(5, 5, 5, 0.98); z-index:999999; flex-direction:column; justify-content:center; align-items:center; color:white; text-align:center; backdrop-filter: blur(15px);">
         <h1 style="font-size:3rem; color:#FF3B30; margin-bottom:10px; font-weight:900; letter-spacing: 2px;">SYSTEM LOCKED</h1>
         <p style="font-size:1.1rem; color:#a1a1a6; font-weight:500; margin-bottom: 30px;">Enter security password to restore global access.</p>
@@ -217,26 +207,15 @@
         <button onclick="checkUnlockPassword()" style="padding:15px 30px; background:linear-gradient(135deg, #007AFF, #5856D6); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:16px; width:250px; transition: 0.3s;">UNLOCK SITE</button>
     </div>
 
-    <div id="adminLoginOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:rgba(5, 5, 5, 0.95); z-index:999998; flex-direction:column; justify-content:center; align-items:center; color:white; backdrop-filter: blur(15px);">
-        <h2 style="color:#007AFF; margin-bottom:20px; font-weight:800; letter-spacing: 1px;">ADMIN AUTHENTICATION</h2>
-        <input type="password" id="adminPwdInput" placeholder="Enter Admin Password..." style="padding:15px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white; outline:none; text-align:center; margin-bottom:15px; width:250px; font-size:16px;">
-        <div style="display:flex; gap:10px;">
-            <button onclick="verifyAdmin()" style="padding:12px 20px; background:linear-gradient(135deg, #34C759, #32ADE6); color:white; border:none; border-radius:12px; font-weight:bold; cursor:pointer; width:120px;">LOGIN</button>
-            <button onclick="closeAdminLogin()" style="padding:12px 20px; background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.2); border-radius:12px; font-weight:bold; cursor:pointer; width:120px;">CANCEL</button>
-        </div>
-    </div>
-
     <canvas id="snow-canvas"></canvas>
 
+    <!-- FLOATING D2L EMERGENCY BUTTON -->
     <button id="emergencyTriggerBtn" onclick="triggerGlobalEmergency()" style="display:none; position:fixed; top:80px; right:30px; z-index:99999; background:linear-gradient(135deg, #FF3B30, #FF2D55); color:white; border:none; padding:12px 20px; border-radius:50px; font-weight:800; font-size:13px; cursor:pointer; box-shadow: 0 10px 20px rgba(255,45,85,0.4); text-transform:uppercase; letter-spacing:1px;">
         🚨 Trigger D2L
     </button>
 
     <div class="admin-panel" id="adminPanel">
-        <div class="admin-title-header" style="color:#FF2D55; font-weight:800; text-align:center; margin-bottom:10px; font-size: 15px; display:flex; justify-content:space-between; align-items:center;">
-            <span>⚡ COMMAND CENTER</span>
-            <span style="cursor:pointer; color:white;" onclick="document.getElementById('adminPanel').style.display='none'">✖</span>
-        </div>
+        <div class="admin-title-header" style="color:#FF2D55; font-weight:800; text-align:center; margin-bottom:10px; font-size: 15px;">⚡ COMMAND CENTER</div>
         
         <div class="admin-section">
             <div class="admin-section-title">Visual Branding</div>
@@ -349,13 +328,13 @@
                 <span>🤐🔑🔒 Secret</span><i>→</i>
             </a>
             <a href="https://Gawyntgg.github.io/Chat/" class="btn btn-Chat" onclick="createBurst(event)">
-                <span>💬💬💬 Chat</span><i>→</i>
+                <span> 💬💬💬 Chat</span><i>→</i>
             </a>
             <a href="https://Gawyntgg.github.io/Hacks/" class="btn btn-Hacks" onclick="createBurst(event)">
-                <span>👾👾👾 Make Money Hacks</span><i>→</i>
+                <span> 👾👾👾 Make Money Hacks</span><i>→</i>
             </a>
             <a href="https://Gawyntgg.github.io/Bike/" class="btn btn-Bike" onclick="createBurst(event)">
-                <span>🚴🚴🚴 Bike</span><i>→</i>
+                <span> 🚴🚴🚴 Bike</span><i>→</i>
             </a>
         </div>
         
@@ -408,37 +387,6 @@
             }
         }
 
-        // --- ADMIN LOGIN LOGIC ---
-        let adminClickCount = 0;
-        document.getElementById('dispVersion').addEventListener('click', () => {
-            adminClickCount++;
-            if(adminClickCount >= 3) {
-                document.getElementById('adminLoginOverlay').style.display = 'flex';
-                document.getElementById('adminPwdInput').focus();
-                adminClickCount = 0;
-            }
-            // Reset if they click too slow
-            setTimeout(() => { adminClickCount = 0; }, 1500);
-        });
-
-        function verifyAdmin() {
-            const pwd = document.getElementById('adminPwdInput').value;
-            if (pwd === 'Greenshark!0') { // <-- YOU CAN CHANGE YOUR ADMIN PASSWORD HERE
-                document.getElementById('adminLoginOverlay').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'flex';
-                document.getElementById('adminPwdInput').value = '';
-            } else {
-                alert('ACCESS DENIED: Incorrect Admin Password');
-                document.getElementById('adminPwdInput').value = '';
-            }
-        }
-
-        function closeAdminLogin() {
-            document.getElementById('adminLoginOverlay').style.display = 'none';
-            document.getElementById('adminPwdInput').value = '';
-        }
-        // -------------------------
-
         function pushGlobalSettings() {
             const settings = {
                 title: document.getElementById('admTitle').value || 'GAWYNT',
@@ -474,13 +422,11 @@
                     sessionStorage.setItem('d2l_redirected', 'true');
                     window.location.href = "https://d2l.cbe.ab.ca/d2l/loginh/";
                 } else {
-                    // Trap them without the flash!
-                    document.documentElement.classList.add('instant-lock');
+                    // If they came back (hit back button), trap them with the password screen
                     document.getElementById('lockdownOverlay').style.display = 'flex';
                 }
             } else {
-                // If emergency is turned off (via correct password), unlock everything
-                document.documentElement.classList.remove('instant-lock');
+                // If emergency is turned off (via correct password), hide lockdown & clear session
                 document.getElementById('lockdownOverlay').style.display = 'none';
                 sessionStorage.removeItem('d2l_redirected');
             }
@@ -648,47 +594,55 @@
                     p.x += (Math.random() - 0.5) * 8 * adminSnowSpeed;
                     p.y += (Math.random() - 0.5) * 8 * adminSnowSpeed;
                 }
-
-                // General Particle Movement Logic (This was cut off in your code!)
-                if (adminEffectType !== 'disco' && adminEffectType !== 'matrix') {
-                    p.x += p.vx * adminSnowSpeed;
-                    p.y += p.vy * adminSnowSpeed;
-                } else if (adminEffectType === 'matrix') {
-                    p.y += p.vy * adminSnowSpeed * 4;
-                }
-
-                // Boundary Wrapping so particles loop
-                if (p.x < -20) p.x = canvas.width + 20;
-                if (p.x > canvas.width + 20) p.x = -20;
+                
+                let currentVy = p.vy * adminSnowSpeed;
+                if (adminEffectType === 'rain') currentVy *= 3;
+                p.y += currentVy; 
+                p.x += (p.vx * adminSnowSpeed);
+                
                 if (p.y > canvas.height + 20) {
                     p.y = -20;
                     p.x = Math.random() * canvas.width;
                 }
+                if (p.x < -20) p.x = canvas.width + 20;
+                if (p.x > canvas.width + 20) p.x = -20;
             }
-
-            // Handle Click Bursts
+            
             for (let i = bursts.length - 1; i >= 0; i--) {
                 let b = bursts[i];
-                ctx.beginPath();
                 ctx.fillStyle = `rgba(255, 214, 10, ${b.life})`;
-                ctx.arc(b.x, b.y, 4, 0, Math.PI * 2);
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, 2, 0, Math.PI * 2);
                 ctx.fill();
-                b.x += b.vx;
-                b.y += b.vy;
+                b.x += b.vx; b.y += b.vy;
                 b.life -= 0.02;
-                if (b.life <= 0) bursts.splice(i, 1);
+                if(b.life <= 0) bursts.splice(i, 1);
             }
-
             requestAnimationFrame(draw);
         }
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initSnow();
+        const card = document.getElementById('mainCard');
+        document.addEventListener('mousemove', (e) => {
+            const rotateX = (window.innerHeight / 2 - e.pageY) / 30;
+            const rotateY = (e.pageX - window.innerWidth / 2) / 30;
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         });
 
-        // Start Everything
+        card.addEventListener('dblclick', () => {
+            const panel = document.getElementById('adminPanel');
+            if (panel.style.display === 'none' || panel.style.display === '') {
+                const pass = prompt('Enter Admin Passcode:');
+                if (pass === 'Greenshark!0') {
+                    panel.style.display = 'flex';
+                } else if (pass !== null) {
+                    alert('Access Denied');
+                }
+            } else {
+                panel.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('resize', initSnow);
         initSnow();
         draw();
     </script>
